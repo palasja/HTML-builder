@@ -19,9 +19,6 @@ function printFileInfo(folder){
           stdout.write(`${basename} - ${ext.slice(1)} - ${size} \n`);
         });
       }
-      if(d.isDirectory()){
-        printFileInfo(folder+ path.sep +d.name); 
-      }
     });
   });
 }
