@@ -12,16 +12,18 @@ const index = path.join(pathResult, 'index.html');
 
 fsPromises.rm(pathResult, {force : true, recursive: true})
   .then(() => fsPromises.mkdir(pathResult))
-  .then(() => fsPromises.readFile(pathTemplate, 'utf8'))
-  .then( template => Promise.resolve( template.split('\n')))
-  .then(arrTemplate => getConstentOnTemplate(arrTemplate) )
-  .then((res) => fsPromises.writeFile(index, res))
-  .then(() => fsPromises.readdir(stylesSourse, {withFileTypes: true}))
-  .then(dir => Promise.resolve(dir.filter(d => d.isFile() && path.extname(path.join(__dirname, 'styles', d.name)) == '.css')))
-  .then(filtredDir => getStyles(filtredDir))
-  .then( (data) => fsPromises.writeFile(stylesResult, data))
-  .then(() => fsPromises.mkdir(assetsResult))
-  .then(()=> copyDir(assetsSourse, assetsResult))
+  .then(() => {
+    fsPromises.readFile(pathTemplate, 'utf8')
+      .then( template => Promise.resolve( template.split('\n')))
+      .then(arrTemplate => getConstentOnTemplate(arrTemplate) )
+      .then((res) => fsPromises.writeFile(index, res));
+    fsPromises.readdir(stylesSourse, {withFileTypes: true})
+      .then(dir => Promise.resolve(dir.filter(d => d.isFile() && path.extname(path.join(__dirname, 'styles', d.name)) == '.css')))
+      .then(filtredDir => getStyles(filtredDir))
+      .then( (data) => fsPromises.writeFile(stylesResult, data));
+    fsPromises.mkdir(assetsResult)
+      .then(()=> copyDir(assetsSourse, assetsResult));
+  })
   .catch(err => console.log(err));
 
 function readComponents(s){
